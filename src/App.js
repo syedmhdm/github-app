@@ -15,15 +15,15 @@ function App() {
       children: [
         {
           index: true,
-          element: <Navigate to={"/users"} />,
-          path: "/",
+          element: <Navigate to={"/github-app/users"} />,
+          path: "/github-app",
         },
         {
           element: <UserList />,
-          path: "/users",
+          path: "/github-app/users",
         },
         {
-          path: "/users/:username",
+          path: "/github-app/users/:username",
           element: <UserDetails />,
         },
       ],
