@@ -3,11 +3,9 @@ import { UsersContextProvider } from "./UsersContext";
 
 function Layout() {
   return (
-    <div>
-      <UsersContextProvider>
-        <Outlet />
-      </UsersContextProvider>
-    </div>
+    <UsersContextProvider>
+      <Outlet />
+    </UsersContextProvider>
   );
 }
 
