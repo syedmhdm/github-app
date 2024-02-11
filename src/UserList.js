@@ -27,7 +27,7 @@ export default function StickyHeadTable() {
   };
 
   function handleUserItemClick(username) {
-    navigate(`/users/${username}`);
+    navigate(`/github-app/users/${username}`);
   }
 
   return (
