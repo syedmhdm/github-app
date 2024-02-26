@@ -4,7 +4,10 @@ import { useParams } from "react-router-dom";
 const UsersContext = createContext();
 
 function UsersContextProvider({ children }) {
-  const [users, setUsers] = useState([]);
+  const [usersToGet, setUsersToGet] = useState("initialUsers");
+  const [users, setUsers] = useState({
+    initialUsers: [],
+  });
   const [usersIsLoading, setUsersIsLoading] = useState(false);
   const [userDetails, setUserDetails] = useState({});
   const [userDetailsIsLoading, setUserDetailsIsLoading] = useState(false);
@@ -15,7 +18,7 @@ function UsersContextProvider({ children }) {
       setUsersIsLoading(true);
       const resp = await fetch(`https://api.github.com/users`);
       const data = await resp.json();
-      setUsers(data);
+      setUsers({ initialUsers: data });
       setUsersIsLoading(false);
     }
     getUsers();
@@ -36,13 +39,51 @@ function UsersContextProvider({ children }) {
     [username]
   );
 
+  // const resp = await fetch(
+  //   `https://api.github.com/search/users?q=${username}+location:france`
+  // );
+  // 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
+  // {
+  //   headers: {
+  //     Auth: "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",
+  //   },
+  // }
+  async function searchByUsernameAndLocation(username = "", location = "") {
+    try {
+      if (username.trim() === "" && location.trim() === "") {
+        setUsersToGet("initialUsers");
+        return;
+      }
+      if (users[username + location]) {
+        setUsersToGet(username + location);
+        return;
+      }
+
+      const resp = await fetch(
+        `https://api.github.com/search/users?q=${username}+location:${location}`
+      );
+      if (!resp.ok) throw new Error("Error get users");
+      const data = await resp.json();
+      setUsers((prev) => {
+        return {
+          ...prev,
+          [username + location]: [...data.items],
+        };
+      });
+      setUsersToGet(username + location);
+    } catch (e) {}
+  }
+
+  const newUsers = users[usersToGet];
+
   return (
     <UsersContext.Provider
       value={{
-        users,
+        users: newUsers,
         usersIsLoading,
         userDetails,
         userDetailsIsLoading,
+        searchByUsernameAndLocation,
       }}
     >
       {children}
